@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { compose } from 'recompose';
 
-import Navigation from './components/Navigation';
-import Separator from './components/Separator';
+import { Navigation } from './components/Navigation';
+import { Separator } from './components/Separator';
 
 import Account from './pages/Account';
 import Action from './pages/Action';
+import Administrator from './pages/Administrator';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
 import PasswordForget from './pages/PasswordForget';
@@ -129,15 +130,21 @@ class AppBase extends Component {
     const { theme } = this.state;
 
     const notistackRef = React.createRef();
+
     const onClickDismiss = key => () => { 
         notistackRef.current.closeSnackbar(key);
     }
 
     return(
       <ThemeProvider theme={theme === 'light' ? light : dark}>
+      <SnackbarProvider preventDuplicate maxSnack={3} autoHideDuration={1800} disableWindowBlurListener={true} ref={notistackRef} action={(key) => ( <Button size="small" onClick={onClickDismiss(key)}>Dismiss</Button> )}>
+        
         <div className={classes.root}>
+          
           <CssBaseline />
+          
           {/* The rest of the application */}
+          
           <Router>
 
             {/**
@@ -149,31 +156,34 @@ class AppBase extends Component {
               * More: https://reactjs.org/docs/lifting-state-up.html
               */}
             <Navigation theme={theme} onToggleTheme={this.toggleTheme} />
+
+            <main className={classes.content}>
+              
+              <div className={classes.toolbar} />
+              
+              <Separator />
+              
+              <Container maxWidth="md" disableGutters>
+                <Route path={ROUTES.ACCOUNT} component={Account} />
+                <Route path={ROUTES.ACTION} component={Action} />
+                <Route path={ROUTES.ADMINISTRATOR} component={Administrator} />
+                <Route path={ROUTES.HOME} component={Home} />
+                <Route exact path={ROUTES.LANDING} component={Landing} />
+                <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForget} />
+                <Route path={ROUTES.SETTINGS} component={Settings} />
+                <Route path={ROUTES.SIGN_IN} component={SignIn} />
+                <Route path={ROUTES.SIGN_UP} component={SignUp} />
+              </Container>
+
+              <Separator />
+
+            </main>
             
-
-            <SnackbarProvider preventDuplicate maxSnack={3} ref={notistackRef} action={(key) => ( <Button size="small" onClick={onClickDismiss(key)}>Dismiss</Button> )}> 
-              <main className={classes.content}>
-                <div className={classes.toolbar} />
-                
-                <Separator />
-                
-                <Container maxWidth="md" disableGutters>
-                  <Route path={ROUTES.ACCOUNT} component={Account} />
-                  <Route path={ROUTES.ACTION} component={Action} />
-                  <Route path={ROUTES.HOME} component={Home} />
-                  <Route exact path={ROUTES.LANDING} component={Landing} />
-                  <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForget} />
-                  <Route path={ROUTES.SETTINGS} component={Settings} />
-                  <Route path={ROUTES.SIGN_IN} component={SignIn} />
-                  <Route path={ROUTES.SIGN_UP} component={SignUp} />
-                </Container>
-
-                <Separator />
-              </main>
-            </SnackbarProvider>
-
           </Router>
+
         </div>
+
+      </SnackbarProvider>
       </ThemeProvider>
     );
   }

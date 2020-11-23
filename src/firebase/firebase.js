@@ -17,6 +17,50 @@ class Firebase {
 
     this.auth = app.auth();
   }
+  
+  // *** Merge authUser and currentUser's ID token *** //
+
+  onAuthUserListener = (next, fallback) =>
+    this.auth.onAuthStateChanged(authUser => {
+      if (authUser) {
+        /**
+         * Get currentUser's customClaims using getIdTokenResult()
+         */
+        this.auth.currentUser.getIdTokenResult()
+        .then((idTokenResult) => {
+            /**
+             * Declare an empty object called {roles}
+             */
+            const roles = {};
+
+            /**
+             * Check if currentUser's customClaims has administrator defined
+             */
+            if (!!idTokenResult.claims.administrator) {
+              // If administrator defined, add it to empty {roles} object
+              roles['administrator'] = idTokenResult.claims.administrator;
+            }
+
+            /**
+             * Create a new authUser - merge between some authUser values & new {roles} object
+             */ 
+            authUser = {
+              // From authUser
+              uid: authUser.uid,
+              displayName: authUser.displayName,
+              email: authUser.email,
+              emailVerified: authUser.emailVerified,  
+              providerData: authUser.providerData,
+              // New roles object
+              roles,
+            };
+
+            next(authUser);
+        });
+      } else {
+        fallback();
+      }
+    });
 
   // *** App API ***
 
@@ -49,7 +93,7 @@ class Firebase {
     this.auth.currentUser.sendEmailVerification({
       url: process.env.REACT_APP_CONFIRM_EMAIL_REDIRECT,
     });
-  
+
   // *** Email Action Handler API ***
 
   doCheckActionCode = actionCode => 

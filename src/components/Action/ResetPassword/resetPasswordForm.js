@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withRouter, Link as RouterLink } from 'react-router-dom';
 import { compose } from 'recompose';
 
-import Separator from '../../../components/Separator';
+import { Separator } from '../../../components/Separator';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';

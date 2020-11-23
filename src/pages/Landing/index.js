@@ -19,13 +19,17 @@ class Landing extends Component {
 
   render() {
     return(
-      <Paper elevation={0} square>
-        <Box p={3}>
-          <Typography align="center" variant="h4" gutterBottom>
-            <strong>Landing</strong>
-          </Typography>
-        </Box>
-      </Paper>
+      <React.Fragment>
+
+        <Paper elevation={0} square>
+          <Box p={3} color="primary.main">
+            <Typography align="center" variant="h4" gutterBottom>
+              <strong>Landing</strong>
+            </Typography>
+          </Box>
+        </Paper>
+
+      </React.Fragment>
     );
   }
 }

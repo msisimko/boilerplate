@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
-import Separator from '../../../components/Separator';
+import { Separator } from '../../../components/Separator';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -60,7 +60,7 @@ class RecoverEmail extends Component {
 
             {success &&
               <Typography align="center" variant="body2" gutterBottom>
-                The request to change your email address has successfully been revoked.
+                The request to change your email address has been revoked successfully.
               </Typography>
             }
 

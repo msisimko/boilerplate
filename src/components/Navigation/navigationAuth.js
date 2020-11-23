@@ -27,6 +27,7 @@ import { withFirebase } from '../../firebase';
 import { AuthUserContext } from '../../session';
 
 import * as ROUTES from '../../constants/routes';
+import * as ROLES from '../../constants/roles';
 
 const styles = theme => ({
   appBar: {
@@ -53,6 +54,8 @@ const styles = theme => ({
 });
 
 class NavigationAuthBase extends Component {
+  static contextType = AuthUserContext;
+
   constructor(props) {
     super(props);
 
@@ -84,6 +87,32 @@ class NavigationAuthBase extends Component {
     const { classes, firebase, theme } = this.props;
 
     const { left, bottom } = this.state;
+
+    const authUser = this.context;
+
+    /**
+     * The links for the Navigation Drawer
+     */
+    const drawerLinks =  (
+      <React.Fragment>
+        <List component="nav" subheader={<ListSubheader color="inherit" disableSticky={true}>Menu</ListSubheader>}>
+          <ListItem button onClick={(e) => this.toggleDrawer('left', false, e)} component={NavLink} exact={true} to={ROUTES.HOME} activeClassName="Mui-selected" aria-label="Home">
+            <ListItemText primary="Home" />
+          </ListItem>
+          <ListItem button onClick={(e) => this.toggleDrawer('left', false, e)} component={NavLink} exact={true} to={ROUTES.ACCOUNT} activeClassName="Mui-selected" aria-label="Account">
+            <ListItemText primary="Account" />
+          </ListItem>
+          <ListItem button onClick={(e) => this.toggleDrawer('left', false, e)} component={NavLink} exact={true} to={ROUTES.SETTINGS} activeClassName="Mui-selected" aria-label="Settings">
+            <ListItemText primary="Settings" />
+          </ListItem>
+          {!!authUser.roles[ROLES.ADMINISTRATOR] && (
+            <ListItem button onClick={(e) => this.toggleDrawer('left', false, e)} component={NavLink} exact={true} to={ROUTES.ADMINISTRATOR} activeClassName="Mui-selected" aria-label="Administrator">
+              <ListItemText primary="Administrator" />
+            </ListItem>
+          )}
+        </List>
+      </React.Fragment>
+    );
     
     return(
       <React.Fragment>
@@ -110,17 +139,7 @@ class NavigationAuthBase extends Component {
           <Drawer className={classes.leftDrawer} variant="permanent" classes={{ paper: classes.leftDrawerPaper, }}>
             <Toolbar />
             <div className={classes.leftDrawerContainer}>
-              <List component="nav" subheader={<ListSubheader color="inherit" disableSticky={true}>Menu</ListSubheader>}>
-                <ListItem button onClick={(e) => this.toggleDrawer('left', false, e)} component={NavLink} exact={true} to={ROUTES.HOME} activeClassName="Mui-selected" aria-label="Home">
-                  <ListItemText primary="Home" />
-                </ListItem>
-                <ListItem button onClick={(e) => this.toggleDrawer('left', false, e)} component={NavLink} exact={true} to={ROUTES.ACCOUNT} activeClassName="Mui-selected" aria-label="Account">
-                  <ListItemText primary="Account" />
-                </ListItem>
-                <ListItem button onClick={(e) => this.toggleDrawer('left', false, e)} component={NavLink} exact={true} to={ROUTES.SETTINGS} activeClassName="Mui-selected" aria-label="Settings">
-                  <ListItemText primary="Settings" />
-                </ListItem>
-              </List>
+              {drawerLinks}
             </div>
           </Drawer>
         </Hidden>
@@ -128,17 +147,7 @@ class NavigationAuthBase extends Component {
         <Hidden lgUp>
           <Drawer anchor="left" open={left} onClose={(e) => this.toggleDrawer('left', false, e)}>
             <div className={classes.leftDrawer} role="presentation" onClick={(e) => this.toggleDrawer('left', false, e)} onKeyDown={(e) => this.toggleDrawer('left', false, e)}>
-              <List component="nav" subheader={<ListSubheader color="inherit" disableSticky={true}>Menu</ListSubheader>}>
-                <ListItem button onClick={(e) => this.toggleDrawer('left', false, e)} component={NavLink} exact={true} to={ROUTES.HOME} activeClassName="Mui-selected" aria-label="Home">
-                  <ListItemText primary="Home" />
-                </ListItem>
-                <ListItem button onClick={(e) => this.toggleDrawer('left', false, e)} component={NavLink} exact={true} to={ROUTES.ACCOUNT} activeClassName="Mui-selected" aria-label="Account">
-                  <ListItemText primary="Account" />
-                </ListItem>
-                <ListItem button onClick={(e) => this.toggleDrawer('left', false, e)} component={NavLink} exact={true} to={ROUTES.SETTINGS} activeClassName="Mui-selected" aria-label="Settings">
-                  <ListItemText primary="Settings" />
-                </ListItem>
-              </List>
+              {drawerLinks}
             </div>
           </Drawer>
         </Hidden>
@@ -147,16 +156,12 @@ class NavigationAuthBase extends Component {
         <Drawer anchor="bottom" open={bottom} onClose={(e) => this.toggleDrawer('bottom', false, e)}>
           <div className={classes.bottomDrawer} role="presentation" onClick={(e) => this.toggleDrawer('bottom', false, e)} onKeyDown={(e) => this.toggleDrawer('bottom', false, e)}>
             <List component="nav" subheader={<ListSubheader color="inherit">You are signed in to your account.</ListSubheader>}>
-              <AuthUserContext.Consumer>
-                { authUser => authUser &&
-                  <ListItem divider>
-                    <ListItemIcon>
-                      <FaceIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={authUser.email} secondary={authUser.uid} />
-                  </ListItem>
-                }
-              </AuthUserContext.Consumer>
+              <ListItem divider>
+                <ListItemIcon>
+                  <FaceIcon />
+                </ListItemIcon>
+                <ListItemText primary={authUser.email} secondary={authUser.uid} />
+              </ListItem>
               <ListItem button onClick={firebase.doSignOut} aria-label="Sign Out">
                 <ListItemText primary="Sign Out" />
               </ListItem>

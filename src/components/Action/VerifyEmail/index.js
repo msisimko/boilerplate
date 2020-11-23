@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
-import Separator from '../../../components/Separator';
+import { Separator } from '../../../components/Separator';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -57,7 +57,7 @@ class VerifyEmail extends Component {
 
             {success &&
               <Typography align="center" variant="body2" gutterBottom>
-                Your email has successfully been verified.
+                Your email has been verified successfully.
               </Typography>
             }
 
