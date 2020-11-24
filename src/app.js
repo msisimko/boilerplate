@@ -58,7 +58,10 @@ const light = createMuiTheme({
     },
     background: {
       default: '#e6ecf0',
-    }
+    },
+    text: {
+      navigation: '#fff',
+    },
   },
   overrides: {
     MuiFormHelperText: {
@@ -82,6 +85,9 @@ const dark = createMuiTheme({
     },
     secondary: {
       main: '#f48fb1',
+    },
+    text: {
+      navigation: '#fff',
     },
   },
   overrides: {

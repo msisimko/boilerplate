@@ -31,8 +31,8 @@ import * as ROLES from '../../constants/roles';
 
 const styles = theme => ({
   appBar: {
-    color: '#fff',
-    backgroundColor: '#1976d2',
+    color: theme.palette.text.navigation,
+    backgroundColor: theme.palette.navigation.main,
     zIndex: theme.zIndex.drawer + 1,
   },
   menuButton: {
