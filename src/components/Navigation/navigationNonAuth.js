@@ -22,6 +22,8 @@ import * as ROUTES from '../../constants/routes';
 
 const styles = theme => ({
   appBar: {
+    color: '#fff',
+    backgroundColor: '#1976d2',
     zIndex: theme.zIndex.drawer + 1,
   },
   menuButton: {
@@ -81,7 +83,7 @@ class NavigationNonAuth extends Component {
     return(
       <React.Fragment>
         
-        <AppBar position="fixed" color="primary" className={classes.appBar} elevation={0}>
+        <AppBar position="fixed" className={classes.appBar} elevation={0}>
           <Toolbar>
             <IconButton edge="start" className={classes.menuButton} onClick={(e) => this.toggleDrawer('left', true, e)} color="inherit" aria-label="Menu">
               <MenuIcon />

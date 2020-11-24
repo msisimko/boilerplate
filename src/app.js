@@ -47,6 +47,9 @@ const styles = theme => ({
 const light = createMuiTheme({
   palette: {
     type: 'light',
+    navigation: {
+      main: '#1976d2',
+    },
     primary: {
       main: '#1976d2',
     },
@@ -71,6 +74,9 @@ const light = createMuiTheme({
 const dark = createMuiTheme({
   palette: {
     type: 'dark',
+    navigation: {
+      main: '#1976d2',
+    },
     primary: {
       main: '#90caf9',
     },
