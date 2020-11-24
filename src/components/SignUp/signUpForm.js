@@ -23,7 +23,7 @@ const styles = theme => ({
 });
 
 const INITIAL_STATE = {
-  displayName: '',        // Only accepts PDTP Registration No. or Nationa I.D. No.
+  displayName: '',
   email: '',
   passwordOne: '',
   passwordTwo: '',
@@ -40,24 +40,7 @@ class SignUpFormBase extends Component {
   }
  
   onChange(event) {
-    /**
-     * Check if event.target.name equals displayName
-     */
-    if (event.target.name === 'displayName') {
-      /**
-       * If event.target.name equals displayName, then transform to uppercase
-       */
-      let displayName = event.target.value;
-      let upperDisplayName = displayName.toUpperCase();
-
-      // Update displayName state only with newly transformed upperDisplayName
-      this.setState({ displayName: upperDisplayName });
-    } else {
-      /**
-       * If even.target.name does not equal displayName, update state immediately
-       */
-      this.setState({ [event.target.name]: event.target.value });
-    }
+    this.setState({ [event.target.name]: event.target.value });
   }
 
   onSubmit(event) {
@@ -65,21 +48,7 @@ class SignUpFormBase extends Component {
 
     const { displayName, email, passwordOne } = this.state;
 
-    /**
-     * pdtpRegex  - Matches the PDTP Reg. No.
-     * idRegex    - Matches the Kenyan National I.D. No.
-     */
-    const pdtpRegex = new RegExp('^PDTP[A-Z0-9_]{6}$');   // PDTP Registration No. regex
-    const idRegex = new RegExp('^[0-9]{8}$');             // National I.D. No. regex
-
-    /**
-     * Check if displayName matches either the PDTP Reg. No. or National I.D. No.
-     */
-    if ( pdtpRegex.test(displayName) || idRegex.test(displayName) ) {
-      /**
-       * If displayName matches either regex expressions, then create user
-       */
-      this.props.firebase
+    this.props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(() => {
         return this.props.firebase.auth.currentUser
@@ -97,12 +66,6 @@ class SignUpFormBase extends Component {
       .catch(error => {
         enqueueSnackbar(error.message, { variant: 'error'});
       });
-    } else {
-      /**
-       * If displayName does not match regex expressions, then enqueue error
-       */
-      enqueueSnackbar("Please enter either your PDTP Registration Number or National I.D. No.", { variant: 'error'});
-    }
 
     event.preventDefault();
   }
@@ -112,10 +75,10 @@ class SignUpFormBase extends Component {
 
     const { displayName, email, passwordOne, passwordTwo } = this.state;
 
-    const isDisabled =  displayName === '' ||
-                        email === '' ||
-                        passwordOne !== passwordTwo ||
-                        passwordOne === '';
+    const isDisabled = displayName === '' ||
+                      email === '' ||
+                      passwordOne !== passwordTwo ||
+                      passwordOne === '';
 
     return (
       <React.Fragment>
@@ -123,8 +86,7 @@ class SignUpFormBase extends Component {
           <TextField
             fullWidth
             id="displayName"
-            label="Voter Unique Identifier"
-            helperText="Please use your PDTP Registration Number or National I.D. Number."
+            label="Display Name"
             margin="normal"
             name="displayName"
             onChange={(e) => this.onChange(e)}
