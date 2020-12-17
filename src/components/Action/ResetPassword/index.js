@@ -16,7 +16,7 @@ import { AuthUserContext } from '../../../session';
 import * as ROUTES from '../../../constants/routes';
 
 const INITIAL_STATE = {
-  isLoading: true,
+  loading: true,
   error: null,
 };
 
@@ -44,7 +44,7 @@ class ResetPasswordBase extends Component {
           this.setState({ error });
         })
         .then(() => {
-          this.setState({ isLoading: false });
+          this.setState({ loading: false });
         });
     }
   }
@@ -52,14 +52,14 @@ class ResetPasswordBase extends Component {
   render() {
     const { actionCode } = this.props;
 
-    const { isLoading, error } = this.state;
+    const { loading, error } = this.state;
 
-    const success = !isLoading && !error;
+    const success = !loading && !error;
 
     return(
       <React.Fragment>
         <Paper elevation={0} square>
-          {isLoading &&
+          {loading &&
             <Box p={3}>
               <Typography align="center" variant="h4" gutterBottom>    
                 <strong>Password Reset</strong>

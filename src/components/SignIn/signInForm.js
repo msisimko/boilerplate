@@ -25,6 +25,7 @@ const styles = theme => ({
 const INITIAL_STATE = {
   email: '',
   password: '',
+  disabled: false,
 };
 
 class SignInFormBase extends Component {
@@ -35,6 +36,7 @@ class SignInFormBase extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
  
   onChange(event) {
@@ -45,6 +47,8 @@ class SignInFormBase extends Component {
     const { enqueueSnackbar } = this.props;
 
     const { email, password } = this.state;
+
+    this.setState({ disabled: true });
  
     this.props.firebase
       .doSignInWithEmailAndPassword(email, password)
@@ -53,19 +57,30 @@ class SignInFormBase extends Component {
         this.props.history.push(ROUTES.HOME);
       })
       .catch(error => {
-        enqueueSnackbar(error.message, { variant: 'error' });
+        enqueueSnackbar(error.message, { variant: 'error', onEntered: this.handleError });
       });
  
     event.preventDefault();
+  }
+
+  handleError(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({ disabled: false });
   }
  
   render() {
     const { classes } = this.props;
 
-    const { email, password } = this.state;
+    const { email, password, disabled } = this.state;
+
+    const disableFormInputs = disabled === true;
     
-    const isDisabled = email === '' ||
-                      password === '';
+    const disableFormSubmit = email === '' ||
+                              password === '' ||
+                              disabled === true;
  
     return (
       <React.Fragment>
@@ -80,6 +95,7 @@ class SignInFormBase extends Component {
             required
             value={email}
             variant="filled"
+            disabled={disableFormInputs}
           />
           <TextField
             fullWidth
@@ -92,15 +108,16 @@ class SignInFormBase extends Component {
             type="password"
             value={password}
             variant="filled"
+            disabled={disableFormInputs}
           />
           <Button
             className={classes.submit}
             color="primary"
-            disabled={isDisabled}
             fullWidth
             size="large"
             type="submit"
             variant="contained"
+            disabled={disableFormSubmit}
           >
             Sign In
           </Button>

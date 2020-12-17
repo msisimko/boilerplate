@@ -30,20 +30,20 @@ const styles = theme => ({
 const INITIAL_STATE = {
   passwordOne: '',
   passwordTwo: '',
+  success: false,
+  disabled: false,
 };
 
 class ResetPasswordFormBase extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { 
-      successful: false, 
-      ...INITIAL_STATE
-    };
+    this.state = { ...INITIAL_STATE };
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.handleClose = this.handleClose.bind(this);
+    this.handleSuccess = this.handleSuccess.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
 
   onChange(event) {
@@ -51,40 +51,51 @@ class ResetPasswordFormBase extends Component {
   }
 
   onSubmit(event) {
-    const { enqueueSnackbar } = this.props;
-
-    const { actionCode } = this.props;
+    const { enqueueSnackbar, actionCode } = this.props;
 
     const { passwordOne } = this.state;
+
+    this.setState({ disabled: true });
 
     this.props.firebase
       .doConfirmPasswordReset(actionCode, passwordOne)
       .then(() => {
-        this.setState({ successful: true });
-        enqueueSnackbar("Your password has been reset.", { variant: 'success', onClose: this.handleClose });
+        this.setState({ success: true });
+        enqueueSnackbar("Your password has been reset.", { variant: 'success', onClose: this.handleSuccess });
       })
       .catch(error => {
-        enqueueSnackbar(error.message, { variant: 'error'});
+        enqueueSnackbar(error.message, { variant: 'error', onEntered: this.handleError });
       });
     
     event.preventDefault();
   }
 
-  handleClose(event, reason) {
+  handleSuccess(event, reason) {
     if (reason === 'clickaway') {
       return;
     }
 
-    this.setState({ ...INITIAL_STATE });
+    this.setState({ success: true });
+  }
+
+  handleError(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({ disabled: false });
   }
   
   render() {
     const { classes } = this.props;
 
-    const { passwordOne, passwordTwo, successful } = this.state;
+    const { passwordOne, passwordTwo, success, disabled } = this.state;
 
-    const isDisabled = passwordOne !== passwordTwo || 
-                      passwordOne === '';
+    const disableFormInputs = disabled === true;
+
+    const disableFormSubmit = passwordOne !== passwordTwo || 
+                              passwordOne === '' ||
+                              disabled === true;
 
     return(
       <React.Fragment>
@@ -106,6 +117,7 @@ class ResetPasswordFormBase extends Component {
                 type="password"
                 value={passwordOne}
                 variant="filled"
+                disabled={disableFormInputs}
               />
               <TextField
                 fullWidth
@@ -118,11 +130,12 @@ class ResetPasswordFormBase extends Component {
                 type="password"
                 value={passwordTwo}
                 variant="filled"
+                disabled={disableFormInputs}
               />
               <Button
                 className={classes.submit}
                 color="primary"
-                disabled={isDisabled}
+                disabled={disableFormSubmit}
                 fullWidth
                 size="large"
                 type="submit"
@@ -134,10 +147,10 @@ class ResetPasswordFormBase extends Component {
           </Box>
         </Paper>
         
-        <Separator show={successful} />
+        <Separator show={success} />
 
         {/* Show continue button if password update is successful */}
-        {successful &&
+        {success &&
           <Paper elevation={0} square>
             <Box p={3}>
               <Button fullWidth size="large" color="primary" component={RouterLink} to={ROUTES.LANDING}>

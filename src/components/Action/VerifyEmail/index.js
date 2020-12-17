@@ -14,7 +14,7 @@ import { withFirebase } from '../../../firebase';
 import * as ROUTES from '../../../constants/routes';
 
 const INITIAL_STATE = {
-  isLoading: true,
+  loading: true,
   error: null,
 };
 
@@ -34,14 +34,14 @@ class VerifyEmail extends Component {
         this.setState({ error });
       })
       .then(() => {
-        this.setState({ isLoading: false });
+        this.setState({ loading: false });
       });
   }
 
   render() {
-    const { isLoading, error } = this.state;
+    const { loading, error } = this.state;
 
-    const success = !isLoading && !error;
+    const success = !loading && !error;
 
     return(
       <React.Fragment>
@@ -51,7 +51,7 @@ class VerifyEmail extends Component {
               <strong>Email Verification</strong>
             </Typography>
             
-            {isLoading &&
+            {loading &&
               <LinearProgress color="primary" />
             }
 

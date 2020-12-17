@@ -27,6 +27,7 @@ const INITIAL_STATE = {
   email: '',
   passwordOne: '',
   passwordTwo: '',
+  disabled: false,
 };
 
 class SignUpFormBase extends Component {
@@ -37,6 +38,7 @@ class SignUpFormBase extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
  
   onChange(event) {
@@ -47,6 +49,8 @@ class SignUpFormBase extends Component {
     const { enqueueSnackbar } = this.props;
 
     const { displayName, email, passwordOne } = this.state;
+
+    this.setState({ disabled: true });
 
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
@@ -64,21 +68,32 @@ class SignUpFormBase extends Component {
         this.props.history.push(ROUTES.HOME);
       })
       .catch(error => {
-        enqueueSnackbar(error.message, { variant: 'error'});
+        enqueueSnackbar(error.message, { variant: 'error', onEntered: this.handleError });
       });
 
     event.preventDefault();
   }
 
+  handleError(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({ disabled: false });
+  }
+
   render() {
     const { classes } = this.props;
 
-    const { displayName, email, passwordOne, passwordTwo } = this.state;
+    const { displayName, email, passwordOne, passwordTwo, disabled } = this.state;
 
-    const isDisabled = displayName === '' ||
-                      email === '' ||
-                      passwordOne !== passwordTwo ||
-                      passwordOne === '';
+    const disableFormInputs = disabled === true;
+
+    const disableFormSubmit = displayName === '' ||
+                              email === '' ||
+                              passwordOne !== passwordTwo ||
+                              passwordOne === '' ||
+                              disabled === true;
 
     return (
       <React.Fragment>
@@ -93,6 +108,7 @@ class SignUpFormBase extends Component {
             required
             value={displayName}
             variant="filled"
+            disabled={disableFormInputs}
           />
           <TextField
             fullWidth
@@ -105,6 +121,7 @@ class SignUpFormBase extends Component {
             required
             value={email}
             variant="filled"
+            disabled={disableFormInputs}
           />
           <TextField
             fullWidth
@@ -118,6 +135,7 @@ class SignUpFormBase extends Component {
             type="password"
             value={passwordOne}
             variant="filled"
+            disabled={disableFormInputs}
           />
           <TextField
             fullWidth
@@ -130,15 +148,16 @@ class SignUpFormBase extends Component {
             type="password"
             value={passwordTwo}
             variant="filled"
+            disabled={disableFormInputs}
           />
           <Button
             className={classes.submit}
             color="primary"
-            disabled={isDisabled}
             fullWidth
             size="large"
             type="submit"
             variant="contained"
+            disabled={disableFormSubmit}
           >
             Sign Up
           </Button>
