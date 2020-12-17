@@ -149,7 +149,7 @@ class AppBase extends Component {
 
     return(
       <ThemeProvider theme={theme === 'light' ? light : dark}>
-      <SnackbarProvider preventDuplicate maxSnack={3} autoHideDuration={1800} disableWindowBlurListener={true} ref={notistackRef} action={(key) => ( <Button size="small" onClick={onClickDismiss(key)}>Dismiss</Button> )}>
+      <SnackbarProvider preventDuplicate maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}} autoHideDuration={2500} disableWindowBlurListener={true} ref={notistackRef} action={(key) => ( <Button size="small" onClick={onClickDismiss(key)}>Dismiss</Button> )}>
         
         <div className={classes.root}>
           
