@@ -64,7 +64,7 @@ class ResetPasswordFormBase extends Component {
         enqueueSnackbar("Your password has been reset.", { variant: 'success', onClose: this.handleSuccess });
       })
       .catch(error => {
-        enqueueSnackbar(error.message, { variant: 'error', onEntered: this.handleError });
+        enqueueSnackbar(error.message, { variant: 'error', onClose: this.handleError });
       });
     
     event.preventDefault();

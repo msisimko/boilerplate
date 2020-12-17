@@ -57,7 +57,7 @@ class SignInFormBase extends Component {
         this.props.history.push(ROUTES.HOME);
       })
       .catch(error => {
-        enqueueSnackbar(error.message, { variant: 'error', onEntered: this.handleError });
+        enqueueSnackbar(error.message, { variant: 'error', onClose: this.handleError });
       });
  
     event.preventDefault();

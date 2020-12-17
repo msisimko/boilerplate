@@ -21,6 +21,7 @@ const styles = theme => ({
 
 const INITIAL_STATE = {
   email: '',
+  disabled: false,
 };
 
 class PasswordForgetFormBase extends Component {
@@ -31,7 +32,8 @@ class PasswordForgetFormBase extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.handleClose = this.handleClose.bind(this);
+    this.handleSuccess = this.handleSuccess.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
   
   onChange(event) {
@@ -42,33 +44,46 @@ class PasswordForgetFormBase extends Component {
     const { enqueueSnackbar } = this.props;
     
     const { email } = this.state;
+
+    this.setState({ disabled: true });
   
     this.props.firebase
       .doSendPasswordResetEmail(email)
       .then(() => {
-        enqueueSnackbar("Please check your inbox for a password reset email.", { variant: 'success', onClose: this.handleClose });
+        enqueueSnackbar("Please check your inbox for a password reset email.", { variant: 'success', onClose: this.handleSuccess });
       })
       .catch(error => {
-        enqueueSnackbar(error.message, { variant: 'error' });
+        enqueueSnackbar(error.message, { variant: 'error', onClose: this.handleError });
       });
   
     event.preventDefault();
   }
 
-  handleClose(event, reason) {
+  handleSuccess(event, reason) {
     if (reason === 'clickaway') {
       return;
     }
 
     this.setState({ ...INITIAL_STATE });
   }
+
+  handleError(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({ disabled: false });
+  }
   
   render() {
     const { classes } = this.props;
     
-    const { email } = this.state;
+    const { email, disabled } = this.state;
 
-    const isDisabled = email === '';
+    const disableFormInputs = disabled === true;
+
+    const disableFormSubmit = email === '' ||
+                              disabled === true;
   
     return (
       <React.Fragment>
@@ -83,15 +98,16 @@ class PasswordForgetFormBase extends Component {
             required
             value={email}
             variant="filled"
+            disabled={disableFormInputs}
           />
           <Button
             className={classes.submit}
             color="primary"
-            disabled={isDisabled}
             fullWidth
             size="large"
             type="submit"
             variant="contained"
+            disabled={disableFormSubmit}
           >
             Reset My Password
           </Button>
